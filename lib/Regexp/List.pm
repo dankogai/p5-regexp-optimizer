@@ -25,7 +25,7 @@ Regexp::List - Assemble multiple Regular Expressions into a single RE
 
 =head1 VERSION
 
-$Id$
+$Id: List.pm,v 0.20 2013/02/23 13:43:59 dankogai Exp dankogai $
 
 =head1 DEPRECATED
 

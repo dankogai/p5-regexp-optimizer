@@ -74,7 +74,7 @@ Regexp::Optimizer - optimizes regular expressions
 
 =head1 VERSION
 
-$Id$
+$Id: Optimizer.pm,v 0.20 2013/02/23 13:43:59 dankogai Exp dankogai $
 
 =head1 SYNOPSIS
 

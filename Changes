@@ -1,7 +1,7 @@
 #
-# $Id: Changes,v 0.15 2004/12/05 16:07:34 dankogai Exp dankogai $
+# $Id: Changes,v 0.20 2013/02/23 13:43:59 dankogai Exp dankogai $
 #
-$Revision: 0.15 $ $Date: 2004/12/05 16:07:34 $
+$Revision: 0.20 $ $Date: 2013/02/23 13:43:59 $
 ! *
   Completely rewritten.
   + uses Regexp::Assemble to optimize alteration

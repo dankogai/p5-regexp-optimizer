@@ -1,0 +1,12 @@
+Changes
+MANIFEST			This list of files
+Makefile.PL
+README
+lib/Regexp/List.pm
+lib/Regexp/Optimizer.pm
+t/00-load.t
+t/01-list.t
+t/02-optimizer.t
+t/manifest.t
+t/pod-coverage.t
+t/pod.t

@@ -9,10 +9,10 @@ our $VERSION = sprintf "%d.%02d", q$Revision: 0.20 $ =~ /(\d+)/g;
 my $re_nested;
 $re_nested = qr{
   \(                     # open paren
-  ((?:
+  (?:
     (?>[^()]+)       |   # Non-parens w/o backtracking or ...
     (??{ $re_nested })   # Group with matching parens
-   )*)
+   )*
   \)                     # close paren
 }msx;
 
@@ -31,9 +31,9 @@ sub _assemble {
         $ra->add( split m{[|]}, $str );
         return $ra->as_string;
     }
-    $str =~ s{$re_nested}{
+    $str =~ s{($re_nested)}{
         no warnings 'uninitialized';
-        my $sub = $1;
+        my $sub = substr($1, 1, -1);
         if ($sub =~ m/\A\?[\?\{\(\+\-\dPR]/ms) {
             "($sub)";  # (?{CODE}) and like ruled out
         }else{
@@ -123,8 +123,19 @@ Same as C<optimize()> but returns a string instead of regexp object.
 
 =head1 CAVEAT
 
+=head2 ??{CODE} used
+
 This module depends on the C<??{CODE}> regexp construct which is still
 considered experimental as of Perl 5.16.
+
+=head2 not idempotent
+
+If you feed the regexp that is already optimized, the resulting regexp
+may not necessarily the same -- usually you get duplicate C<(?:)>:
+
+    my $re = qr/foobar|fooxar|foozap/;
+    $re = $ro->optimize($re); # qr/foo(?:[bx]ar|zap)/
+    $re = $ro->optimize($re); # qr/foo(?:(?:[bx]ar|zap))/
 
 =head1 SEE ALSO
 

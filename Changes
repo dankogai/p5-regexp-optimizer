@@ -3,8 +3,9 @@
 #
 $Revision: 0.20 $ $Date: 2013/02/23 13:43:59 $
 ! lib/Regexp/Optimizer.pm t/02-optimizer.t
-  + More Tests
   + Clearner Codes
+  + More Tests
+  + More Documents
 
 0.20 2013/02/23 13:43:59
 ! *

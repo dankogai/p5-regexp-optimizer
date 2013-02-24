@@ -2,6 +2,11 @@
 # $Id: Changes,v 0.20 2013/02/23 13:43:59 dankogai Exp dankogai $
 #
 $Revision: 0.20 $ $Date: 2013/02/23 13:43:59 $
+! lib/Regexp/Optimizer.pm t/02-optimizer.t
+  + More Tests
+  + Clearner Codes
+
+0.20 2013/02/23 13:43:59
 ! *
   Completely rewritten.
   + uses Regexp::Assemble to optimize alteration

@@ -8,12 +8,11 @@ our $VERSION = sprintf "%d.%02d", q$Revision: 0.20 $ =~ /(\d+)/g;
 
 my $re_nested;
 $re_nested = qr{
-  (?<=[^\\])\(           # unescaped open paren
-  (?:
-    (?>[^()]+)           # Non-parens w/o backtracking
-    |                    # or
+  \(                     # open paren
+  ((?:
+    (?>[^()]+)       |   # Non-parens w/o backtracking or ...
     (??{ $re_nested })   # Group with matching parens
-   )*
+   )*)
   \)                     # close paren
 }msx;
 
@@ -27,40 +26,51 @@ sub new {
 sub _assemble {
     my $str = shift;
     return $str if $str !~ $re_optimize;
-    if ( $str =~ s{\A(\((?:\?.*?:)?)}{}msx ) {
-        my $op = $1;
-        $str =~ s/\)\z//msx;
-        return $op . _assemble($str) . ')';
-    }
-    elsif ( $str =~ m{(?<=[^\\])\(}msx ) {
-        $str =~ s/($re_nested)/_assemble($1)/msxge;
-        return $str;
-    }
-    else {
+    if ( $str !~ m/[(]/ms ) {
         my $ra = Regexp::Assemble->new();
-        $ra->add( split m{(?<=[^\\])\|}, $str );
+        $ra->add( split m{[|]}, $str );
         return $ra->as_string;
     }
+    $str =~ s{$re_nested}{
+        no warnings 'uninitialized';
+        my $sub = $1;
+        if ($sub =~ m/\A\?[\?\{\(\+\-\dPR]/ms) {
+            "($sub)";  # (?{CODE}) and like ruled out
+        }else{
+            my $mod = ($sub =~ s/\A\?//) ? '?' : '';
+            if ($mod) {
+                $sub =~ s{\A(
+                              [\w\^]*:   | # modifier
+                              [<]?[=!]   | # assertions
+                              [<]\w+[>]  | # named capture
+                              [']\w+[']    # ditto
+                          )
+                     }{}msx;
+                $mod .= $1;
+            }
+            '(' . $mod . _assemble($sub) . ')'
+        }
+    }msxge;
+    $str;
 }
 
 sub as_string {
     my ( $self, $str ) = @_;
     return $str if $str !~ $re_optimize;
-    $str =~ s/\A\(\?(.*?)://;
-    my $mod = $1;
-    $str =~ s/\)\z//;
+    my ($mod) = ($str =~ m/\A\(\?(.*?):/);
     if ( $mod =~ /x/ ) {
         $str =~ s{^\s+}{}mg;
         $str =~ s{(?<=[^\\])\s*?#.*?$}{}mg;
         $str =~ s{(?:\r\n?|\n)}{}msg;
     }
-    $str = _assemble($str);
-    "(?$mod:$str)";
+    # escape all occurance of '\(' and '\)'
+    $str =~ s/\\([\(\)])/sprintf "\\x%02x" , ord $1/ge;
+    _assemble($str);
 }
 
 sub optimize {
     my $self = shift;
-    my $re   = $self->as_string(@_);
+    my $re   = $self->as_string(shift);
     qr{$re};
 }
 

@@ -8,12 +8,12 @@ our $VERSION = sprintf "%d.%02d", q$Revision: 0.20 $ =~ /(\d+)/g;
 
 my $re_nested;
 $re_nested = qr{
-  \(                     # open paren
-  (?:
-    (?>[^()]+)       |   # Non-parens w/o backtracking or ...
-    (??{ $re_nested })   # Group with matching parens
-   )*
-  \)                     # close paren
+  \(                   # open paren
+  ((?:                 # start capture  
+    (?>[^()]+)       | # Non-parens w/o backtracking or ...
+    (??{ $re_nested }) # Group with matching parens
+  )*)                  # end capture
+  \)                   # close paren
 }msx;
 
 my $re_optimize = qr{(?<=[^\\])\|}msx;
@@ -31,16 +31,16 @@ sub _assemble {
         $ra->add( split m{[|]}, $str );
         return $ra->as_string;
     }
-    $str =~ s{($re_nested)}{
+    $str =~ s{$re_nested}{
         no warnings 'uninitialized';
-        my $sub = substr($1, 1, -1);
-        if ($sub =~ m/\A\?[\?\{\(\+\-\dPR]/ms) {
+        my $sub = $1;
+        if ($sub =~ m/\A\?(?:[\?\{\(PR]|[\+\-]?[0-9])/ms) {
             "($sub)";  # (?{CODE}) and like ruled out
         }else{
             my $mod = ($sub =~ s/\A\?//) ? '?' : '';
             if ($mod) {
                 $sub =~ s{\A(
-                              [\w\^]*:   | # modifier
+                              [\w\^\-]*: | # modifier
                               [<]?[=!]   | # assertions
                               [<]\w+[>]  | # named capture
                               [']\w+[']    # ditto

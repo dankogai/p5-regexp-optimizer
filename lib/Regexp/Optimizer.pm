@@ -4,7 +4,7 @@ use 5.008001;
 use strict;
 use warnings FATAL => 'all';
 use Regexp::Assemble;
-our $VERSION = sprintf "%d.%02d", q$Revision: 0.22 $ =~ /(\d+)/g;
+our $VERSION = sprintf "%d.%02d", q$Revision: 0.23 $ =~ /(\d+)/g;
 
 my $re_nested;
 $re_nested = qr{
@@ -88,7 +88,7 @@ Regexp::Optimizer - optimizes regular expressions
 
 =head1 VERSION
 
-$Id: Optimizer.pm,v 0.22 2013/02/26 04:51:15 dankogai Exp dankogai $
+$Id: Optimizer.pm,v 0.23 2013/02/26 05:47:41 dankogai Exp dankogai $
 
 =head1 SYNOPSIS
 

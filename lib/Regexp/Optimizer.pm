@@ -43,7 +43,8 @@ sub _assemble {
                               [\w\^\-]*: | # modifier
                               [<]?[=!]   | # assertions
                               [<]\w+[>]  | # named capture
-                              [']\w+[']    # ditto
+                              [']\w+[']  | # ditto
+                              [|]          # branch reset
                           )
                      }{}msx;
                 $mod .= $1;
@@ -61,7 +62,10 @@ sub as_string {
     if ( $mod =~ /x/ ) {
         $str =~ s{^\s+}{}mg;
         $str =~ s{(?<=[^\\])\s*?#.*?$}{}mg;
+        $str =~ s{\s+[|]\s+}{|}mg;
         $str =~ s{(?:\r\n?|\n)}{}msg;
+        $str =~ s{[ ]+}{ }msgx;
+        # warn $str;
     }
     # escape all occurance of '\(' and '\)'
     $str =~ s/\\([\(\)])/sprintf "\\x%02x" , ord $1/ge;

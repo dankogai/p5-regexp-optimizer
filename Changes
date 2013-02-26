@@ -2,6 +2,11 @@
 # $Id: Changes,v 0.21 2013/02/24 05:15:37 dankogai Exp dankogai $
 #
 $Revision: 0.21 $ $Date: 2013/02/24 05:15:37 $
+! t/02-optimizer.t
+  Since qr// happens compile time, SKIP: is not good enough to make
+  older perls (which do not support named captures) to make them skip.
+
+$Revision: 0.21 $ $Date: 2013/02/24 05:15:37 $
 ! lib/Regexp/Optimizer.pm t/02-optimizer.t
   + Clearner Codes
   + More Tests

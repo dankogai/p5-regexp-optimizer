@@ -23,19 +23,21 @@ is $ro->as_string($re_nested), qr/f(?:oo(?:l(?:ish(?:ness)?)?)?)/, 'Nested';
 
 SKIP: {
     skip "Perl v5.14 or better required", 4 unless $] >= 5.014;
-    my $re_named = qr/(?<abc>a|b|c)/;
-    is $ro->as_string($re_named), qr/(?<abc>[abc])/, "Named: $re_named";
-    $re_named = qr/(?'abc'a|b|c)/;
-    is $ro->as_string($re_named), qr/(?'abc'[abc])/, "Named: $re_named";
-    for my $str (
-        qw{
-        (??{0|1})
-        (?(?=bar|foo)foo|bar)
+    eval q{
+        my $re_named = qr/(?<abc>a|b|c)/;
+        is $ro->as_string($re_named), qr/(?<abc>[abc])/, "Named: $re_named";
+        $re_named = qr/(?'abc'a|b|c)/;
+        is $ro->as_string($re_named), qr/(?'abc'[abc])/, "Named: $re_named";
+        for my $str (
+            qw{
+            (??{0|1})
+            (?(?=bar|foo)foo|bar)
+            }
+          )
+        {
+            use re 'eval';
+            my $re = qr{$str};
+            is $ro->as_string($re), $re, "Code: $re";
         }
-      )
-    {
-        use re 'eval';
-        my $re = qr{$str};
-        is $ro->as_string($re), $re, "Code: $re";
-    }
+    };
 }
